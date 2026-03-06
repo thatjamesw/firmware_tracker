@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import re
+import urllib.error
 from html import unescape
 from typing import Any
 
@@ -171,6 +172,9 @@ def sync_dji_downloads(device_name: str, source: dict[str, Any], timeout: int) -
         releases = parse_dji_release_pdf(pdf_bytes, device_name)
         if releases:
             return releases
+    # Some DJI pages occasionally keep stale release-note links; treat 404-only PDF failures as no entries.
+    if isinstance(last_exc, urllib.error.HTTPError) and last_exc.code == 404:
+        return []
     if last_exc:
         raise last_exc
     return []

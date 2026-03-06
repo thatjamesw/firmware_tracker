@@ -4,11 +4,11 @@
     "device_sources": {
       "wa150": {
         "type": "dji_downloads",
-        "url": "https://www.dji.com/downloads/products/mini-5-pro",
+        "url": "https://www.dji.com/fi/mini-5-pro/downloads",
         "allow_empty": true,
         "fallback_source": {
           "type": "dji_downloads",
-          "url": "https://www.dji.com/mini-5-pro/downloads",
+          "url": "https://www.dji.com/fi/downloads/products/mini-5-pro#doc",
           "allow_empty": true
         }
       },

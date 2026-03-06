@@ -1,5 +1,7 @@
 import json
+import io
 import sys
+import urllib.error
 import unittest
 from pathlib import Path
 
@@ -253,6 +255,48 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(releases[0]["version"], "01.00.0500")
         self.assertIn("https://example.com/RN/rn-404.pdf", calls)
         self.assertIn("https://example.com/RN/rn-good.pdf", calls)
+
+    def test_dji_parser_returns_empty_when_all_pdf_links_404(self) -> None:
+        html = """
+        <li class="groups-download-item">
+          <div class="groups-item-name">DJI Mini 5 Pro - Release Notes</div>
+          <a href="https://example.com/RN/rn-404-a.pdf" class="download-file">Download</a>
+        </li>
+        <li class="groups-download-item">
+          <div class="groups-item-name">DJI Mini 5 Pro - Release Notes</div>
+          <a href="https://example.com/RN/rn-404-b.pdf" class="download-file">Download</a>
+        </li>
+        """
+
+        original_fetch = dji_source.fetch_bytes
+        original_parse_pdf = dji_source.parse_dji_release_pdf
+        try:
+            def fake_fetch(url: str, timeout: int) -> bytes:
+                _ = timeout
+                if url == "https://www.dji.com/mini-5-pro/downloads":
+                    return html.encode("utf-8")
+                if "rn-404" in url:
+                    raise urllib.error.HTTPError(
+                        url=url,
+                        code=404,
+                        msg="Not Found",
+                        hdrs=None,
+                        fp=io.BytesIO(b"not found"),
+                    )
+                raise RuntimeError(f"Unexpected URL: {url}")
+
+            dji_source.fetch_bytes = fake_fetch
+            dji_source.parse_dji_release_pdf = lambda _pdf, _name: []  # type: ignore[assignment]
+            releases = dji_source.sync_dji_downloads(
+                "Mini 5 Pro",
+                {"url": "https://www.dji.com/mini-5-pro/downloads"},
+                timeout=5,
+            )
+        finally:
+            dji_source.fetch_bytes = original_fetch
+            dji_source.parse_dji_release_pdf = original_parse_pdf
+
+        self.assertEqual(releases, [])
 
 
 if __name__ == "__main__":
