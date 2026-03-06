@@ -10,9 +10,7 @@ on:
     - cron: '0 6 * * *'
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 concurrency:
   group: pages
@@ -21,6 +19,7 @@ concurrency:
 jobs:
   schedule-gate:
     runs-on: ubuntu-latest
+    permissions: {}
     outputs:
       run_now: ${{ steps.gate.outputs.run_now }}
     steps:
@@ -45,6 +44,8 @@ jobs:
     needs: schedule-gate
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -94,6 +95,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
