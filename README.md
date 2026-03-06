@@ -85,6 +85,8 @@ Recommended GitHub branch protection:
 - `Dell U4025QW` remains static/manual due anti-bot protections on official support pages.
 - Sync runs in parallel with retry/backoff and records source health each run.
   - Default: app continues to serve last known good data even if a source fails.
+  - Transient network failures (for example temporary DNS outages in CI) are tracked separately and do not raise persistent UI source-issue banners.
+  - Per-device `allow_empty: true` can be used for feeds where no firmware is currently published; this avoids false-positive source alerts.
   - Optional strict mode: `python scripts/fetch_firmware_details.py --fail-on-regression`
 - UI is single-table for all devices and includes:
   - `Refresh Now` (opens `sources.refresh_workflow_url`)

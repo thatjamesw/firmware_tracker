@@ -40,7 +40,12 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_*.py' -v
 
       - name: Fetch tracked firmware details from official sources
-        run: python scripts/fetch_firmware_details.py
+        run: |
+          python scripts/fetch_firmware_details.py || (
+            echo "First fetch attempt failed, retrying after 20s..."
+            sleep 20
+            python scripts/fetch_firmware_details.py
+          )
 
       - name: Generate browser assets
         run: python scripts/generate_index.py

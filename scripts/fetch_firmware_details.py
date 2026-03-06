@@ -6,7 +6,9 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import json
+import socket
 import sys
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -22,6 +24,30 @@ from sources.common import configure_fetch, normalize_releases
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data" / "devices.json"
 SCHEMA_FILE = ROOT / "data" / "devices.schema.json"
+
+
+def is_transient_network_error(exc: Exception) -> bool:
+    """Detect temporary connectivity failures that should not be treated as persistent source issues."""
+    text = str(exc).lower()
+    transient_markers = (
+        "temporary failure in name resolution",
+        "name or service not known",
+        "nodename nor servname provided",
+        "connection timed out",
+        "timed out",
+        "temporary failure",
+    )
+    if any(marker in text for marker in transient_markers):
+        return True
+    if isinstance(exc, TimeoutError):
+        return True
+    if isinstance(exc, urllib.error.URLError):
+        reason = exc.reason
+        if isinstance(reason, TimeoutError | socket.gaierror):
+            return True
+        reason_text = str(reason).lower()
+        return any(marker in reason_text for marker in transient_markers)
+    return False
 
 
 def parse_args() -> argparse.Namespace:
@@ -81,9 +107,10 @@ def process_device(
     try:
         releases = normalize_releases(sync_device(device_name, source, timeout))
     except Exception as exc:  # noqa: BLE001
+        status = "transient_error" if is_transient_network_error(exc) else "error"
         return {
             "device_id": device_id,
-            "status": "error",
+            "status": status,
             "reason": str(exc),
             "releases": [],
             "source_type": source_type,
@@ -91,6 +118,15 @@ def process_device(
         }
 
     if not releases:
+        if bool(source.get("allow_empty")):
+            return {
+                "device_id": device_id,
+                "status": "ok_empty",
+                "reason": "no firmware entries published yet",
+                "releases": [],
+                "source_type": source_type,
+                "vendor": vendor,
+            }
         return {
             "device_id": device_id,
             "status": "no_entries",
@@ -112,7 +148,15 @@ def process_device(
 
 def build_sync_status(results: list[dict[str, Any]]) -> dict[str, Any]:
     issues = []
-    health_counts = {"ok": 0, "no_entries": 0, "error": 0, "missing_source": 0}
+    transient_issues = []
+    health_counts = {
+        "ok": 0,
+        "ok_empty": 0,
+        "no_entries": 0,
+        "error": 0,
+        "transient_error": 0,
+        "missing_source": 0,
+    }
     by_vendor: dict[str, dict[str, Any]] = {}
 
     for result in results:
@@ -125,8 +169,10 @@ def build_sync_status(results: list[dict[str, Any]]) -> dict[str, Any]:
             health_counts[status] += 1
 
         vendor_entry = by_vendor.setdefault(vendor, {"ok": 0, "issues": []})
-        if status == "ok":
+        if status in {"ok", "ok_empty"}:
             vendor_entry["ok"] += 1
+        elif status == "transient_error":
+            transient_issues.append({"vendor": vendor, "device_id": device_id, "status": status, "reason": reason})
         elif vendor != "static":
             vendor_entry["issues"].append({"device_id": device_id, "status": status, "reason": reason})
             issues.append({"vendor": vendor, "device_id": device_id, "status": status, "reason": reason})
@@ -146,6 +192,7 @@ def build_sync_status(results: list[dict[str, Any]]) -> dict[str, Any]:
         "health_counts": health_counts,
         "vendor_health": vendor_health,
         "issues": issues,
+        "transient_issues": transient_issues,
     }
 
 
@@ -197,7 +244,7 @@ def main() -> int:
             else []
         )
 
-        if status == "ok":
+        if status in {"ok", "ok_empty"}:
             if releases != current:
                 firmware_index[device_id] = {"releases": releases}
                 updated_devices.append(device_id)
@@ -224,12 +271,21 @@ def main() -> int:
     counts = sync_status.get("health_counts", {})
     print(
         "Source health summary: "
-        + ", ".join(f"{key}={counts.get(key, 0)}" for key in ["ok", "no_entries", "error", "missing_source"])
+        + ", ".join(
+            f"{key}={counts.get(key, 0)}"
+            for key in ["ok", "ok_empty", "no_entries", "error", "transient_error", "missing_source"]
+        )
     )
 
     if sync_status.get("issues"):
         print("Source issues detected (app will continue using last known good data):")
         for issue in sync_status["issues"]:
+            print(
+                f"- {issue['vendor']}: {issue['device_id']} ({issue['status']}: {issue['reason']})"
+            )
+    if sync_status.get("transient_issues"):
+        print("Transient source fetch issues detected (not surfaced as persistent UI source issues):")
+        for issue in sync_status["transient_issues"]:
             print(
                 f"- {issue['vendor']}: {issue['device_id']} ({issue['status']}: {issue['reason']})"
             )

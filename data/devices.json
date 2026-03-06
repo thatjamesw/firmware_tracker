@@ -4,7 +4,7 @@
     "device_sources": {
       "wa150": {
         "type": "dji_downloads",
-        "url": "https://www.dji.com/mini-5-pro/downloads"
+        "url": "https://www.dji.com/fi/mobile/mini-5-pro/downloads"
       },
       "wa520": {
         "type": "dji_downloads",
@@ -29,7 +29,8 @@
         "page_url": "https://www.sony.com/electronics/support/lenses-e-mount-lenses/sel1635gm2/downloads",
         "mdl": "SEL1635GM2",
         "lang": "en",
-        "area": "us"
+        "area": "us",
+        "allow_empty": true
       },
       "sony_70200gm2": {
         "type": "sony_cscs",
