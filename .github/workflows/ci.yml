@@ -38,3 +38,6 @@ jobs:
 
       - name: Validate build script output generation
         run: python scripts/generate_index.py
+
+      - name: Frontend smoke test
+        run: python scripts/smoke_test_frontend.py
