@@ -59,6 +59,24 @@ Then open `docs/index.html` in a browser.
 4. The site deploys and refreshes daily at 06:15 UTC.
 5. CI runs parser/schema tests before sync.
 
+## Automated Testing (No Local Setup)
+
+- `CI` workflow (`.github/workflows/ci.yml`) runs on every pull request and push to `main`:
+  - installs dependencies
+  - runs unit/parser/schema tests
+  - runs `scripts/generate_index.py` as a build smoke test
+- `Update and Deploy Firmware Tracker` workflow (`.github/workflows/update-and-deploy.yml`) runs daily + manual:
+  - re-runs tests
+  - fetches official firmware data
+  - regenerates browser assets + markdown summary
+  - commits changes (scheduled/manual runs) and deploys to GitHub Pages
+
+Recommended GitHub branch protection:
+
+- Require pull request before merging to `main`
+- Require status check: `CI / test`
+- Disable direct pushes to `main` (except admins if you want an emergency path)
+
 ## Notes
 
 - Includes DJI, Sony, and lighting devices by default.
