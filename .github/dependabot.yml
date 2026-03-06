@@ -7,7 +7,11 @@ updates:
       day: "monday"
       time: "06:00"
       timezone: "Europe/Helsinki"
-    open-pull-requests-limit: 5
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 2
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -16,4 +20,8 @@ updates:
       day: "monday"
       time: "06:15"
       timezone: "Europe/Helsinki"
-    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 2

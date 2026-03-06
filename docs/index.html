@@ -663,13 +663,19 @@
         const vendor = (item.vendor || "source").toUpperCase();
         const deviceName = getDeviceNameById(item.device_id || "");
         const reason = item.reason || item.status || "issue detected";
-        return `${vendor} / ${deviceName}: ${reason}`;
+        const streak = Number(item.streak_days || 0);
+        const streakText = streak > 1 ? ` (${streak} runs)` : "";
+        return `${vendor} / ${deviceName}: ${reason}${streakText}`;
       });
       const previewText = previewItems.join(" | ");
       const moreCount = issues.length - previewItems.length;
       const runText = status.last_run_utc ? ` Last check: ${status.last_run_utc}.` : "";
       const moreText = moreCount > 0 ? ` +${moreCount} more.` : "";
-      text.textContent = `Source issues detected: ${previewText}.${moreText}${runText} Existing data is still shown.`;
+      const maxStreak = Number(status.max_issue_streak_days || 0);
+      const prefix = maxStreak >= 3
+        ? "Persistent source issues detected (3+ runs)"
+        : "Source issues detected";
+      text.textContent = `${prefix}: ${previewText}.${moreText}${runText} Existing data is still shown.`;
       banner.classList.add("active");
 
       hideBtn.addEventListener("click", () => {

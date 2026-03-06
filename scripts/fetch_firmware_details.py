@@ -146,9 +146,11 @@ def process_device(
     }
 
 
-def build_sync_status(results: list[dict[str, Any]]) -> dict[str, Any]:
+def build_sync_status(results: list[dict[str, Any]], prior_sync_status: dict[str, Any] | None = None) -> dict[str, Any]:
     issues = []
     transient_issues = []
+    prior_streaks = prior_sync_status.get("issue_streaks", {}) if isinstance(prior_sync_status, dict) else {}
+    issue_streaks: dict[str, int] = {}
     health_counts = {
         "ok": 0,
         "ok_empty": 0,
@@ -175,7 +177,23 @@ def build_sync_status(results: list[dict[str, Any]]) -> dict[str, Any]:
             transient_issues.append({"vendor": vendor, "device_id": device_id, "status": status, "reason": reason})
         elif vendor != "static":
             vendor_entry["issues"].append({"device_id": device_id, "status": status, "reason": reason})
-            issues.append({"vendor": vendor, "device_id": device_id, "status": status, "reason": reason})
+            streak_key = f"{vendor}:{device_id}"
+            prev_streak = prior_streaks.get(streak_key, 0)
+            try:
+                prev_streak_num = int(prev_streak)
+            except (TypeError, ValueError):
+                prev_streak_num = 0
+            streak_days = max(1, prev_streak_num + 1)
+            issue_streaks[streak_key] = streak_days
+            issues.append(
+                {
+                    "vendor": vendor,
+                    "device_id": device_id,
+                    "status": status,
+                    "reason": reason,
+                    "streak_days": streak_days,
+                }
+            )
 
     vendor_health = {}
     for vendor, entry in by_vendor.items():
@@ -187,12 +205,16 @@ def build_sync_status(results: list[dict[str, Any]]) -> dict[str, Any]:
             "issues": entry["issues"],
         }
 
+    max_issue_streak_days = max(issue_streaks.values(), default=0)
+
     return {
         "last_run_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "health_counts": health_counts,
         "vendor_health": vendor_health,
         "issues": issues,
         "transient_issues": transient_issues,
+        "issue_streaks": issue_streaks,
+        "max_issue_streak_days": max_issue_streak_days,
     }
 
 
@@ -254,8 +276,8 @@ def main() -> int:
         if source_type != "static" and current and status in {"no_entries", "error", "missing_source"}:
             regressions.append(f"{device_id} ({status}: {reason})")
 
-    sync_status = build_sync_status(results)
     prior_sync_status = sources_block.get("sync_status")
+    sync_status = build_sync_status(results, prior_sync_status if isinstance(prior_sync_status, dict) else None)
     sources_block["sync_status"] = sync_status
 
     if updated_devices:
