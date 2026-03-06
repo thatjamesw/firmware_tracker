@@ -86,6 +86,18 @@ class ParserTests(unittest.TestCase):
         # Raises on validation failure.
         ffd.validate_payload_schema(payload)
 
+    def test_sync_status_tracks_issue_streak_days(self) -> None:
+        prior = {"issue_streaks": {"dji:wa150": 2}}
+        results = [
+            {"device_id": "wa150", "status": "error", "reason": "HTTP Error 404", "vendor": "dji"},
+            {"device_id": "wa520", "status": "ok", "reason": "", "vendor": "dji"},
+        ]
+
+        status = ffd.build_sync_status(results, prior)
+        self.assertEqual(status["max_issue_streak_days"], 3)
+        self.assertEqual(status["issue_streaks"]["dji:wa150"], 3)
+        self.assertEqual(status["issues"][0]["streak_days"], 3)
+
     def test_dji_parser_falls_back_when_first_pdf_404s(self) -> None:
         html = """
         <li class="groups-download-item">
