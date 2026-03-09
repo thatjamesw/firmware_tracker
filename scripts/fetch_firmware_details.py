@@ -173,9 +173,15 @@ def process_device(
         }
 
     attempts: list[dict[str, Any]] = [source]
-    fallback_source = source.get("fallback_source")
-    if isinstance(fallback_source, dict):
-        attempts.append(fallback_source)
+    fallback_sources = source.get("fallback_sources")
+    if isinstance(fallback_sources, list):
+        for item in fallback_sources:
+            if isinstance(item, dict):
+                attempts.append(item)
+    else:
+        fallback_source = source.get("fallback_source")
+        if isinstance(fallback_source, dict):
+            attempts.append(fallback_source)
 
     last_result: dict[str, Any] | None = None
     for idx, candidate in enumerate(attempts):

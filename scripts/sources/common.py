@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from typing import Any
@@ -19,13 +20,24 @@ def configure_fetch(retries: int, retry_backoff: float) -> None:
 
 
 def fetch_bytes(url: str, timeout: int) -> bytes:
+    host = ""
+    try:
+        host = urllib.parse.urlparse(url).netloc.lower()
+    except Exception:  # noqa: BLE001
+        host = ""
+
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "text/html,application/pdf,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    # DJI endpoints are region-routed; sending explicit region/lang cookies improves consistency in CI.
+    if host.endswith("dji.com"):
+        headers["Cookie"] = "region=GB; lang=en"
+
     req = urllib.request.Request(
         url,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Accept": "text/html,application/pdf,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.9",
-        },
+        headers=headers,
     )
     last_exc: Exception | None = None
     for attempt in range(FETCH_RETRIES + 1):

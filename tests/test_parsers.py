@@ -233,6 +233,48 @@ class ParserTests(unittest.TestCase):
         self.assertTrue(result["used_fallback"])
         self.assertEqual(result["releases"][0]["version"], "3.1.4")
 
+    def test_process_device_supports_fallback_sources_list(self) -> None:
+        original_sync_device = ffd.sync_device
+        try:
+            def fake_sync(device_name: str, source: dict[str, str], timeout: int):
+                _ = device_name, timeout
+                if source.get("url") == "https://primary.example":
+                    raise RuntimeError("primary failed")
+                if source.get("url") == "https://fallback-a.example":
+                    return []
+                if source.get("url") == "https://fallback-b.example":
+                    return [
+                        {
+                            "version": "7.7.7",
+                            "released_time": "2026-03-09",
+                            "release_note": {"en": "fallback list"},
+                            "arb": None,
+                            "active": True,
+                        }
+                    ]
+                return []
+
+            ffd.sync_device = fake_sync  # type: ignore[assignment]
+            result = ffd.process_device(
+                "dev-list",
+                "Device List",
+                {
+                    "type": "apple_support",
+                    "url": "https://primary.example",
+                    "fallback_sources": [
+                        {"type": "apple_support", "url": "https://fallback-a.example"},
+                        {"type": "apple_support", "url": "https://fallback-b.example"},
+                    ],
+                },
+                timeout=5,
+            )
+        finally:
+            ffd.sync_device = original_sync_device  # type: ignore[assignment]
+
+        self.assertEqual(result["status"], "ok")
+        self.assertTrue(result["used_fallback"])
+        self.assertEqual(result["releases"][0]["version"], "7.7.7")
+
     def test_process_device_treats_404_as_empty_and_uses_fallback(self) -> None:
         original_sync_device = ffd.sync_device
         try:
