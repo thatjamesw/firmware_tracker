@@ -4,15 +4,29 @@
     "device_sources": {
       "wa150": {
         "type": "dji_downloads",
-        "url": "https://www.dji.com/fi/mini-5-pro/downloads",
+        "url": "https://www.dji.com/fi/mobile/mini-5-pro/downloads",
         "allow_empty": true,
         "treat_404_as_empty": true,
-        "fallback_source": {
-          "type": "dji_downloads",
-          "url": "https://www.dji.com/fi/downloads/products/mini-5-pro#doc",
-          "allow_empty": true,
-          "treat_404_as_empty": true
-        }
+        "fallback_sources": [
+          {
+            "type": "dji_downloads",
+            "url": "https://www.dji.com/global/mini-5-pro/downloads",
+            "allow_empty": true,
+            "treat_404_as_empty": true
+          },
+          {
+            "type": "dji_downloads",
+            "url": "https://www.dji.com/fi/downloads/products/mini-5-pro#doc",
+            "allow_empty": true,
+            "treat_404_as_empty": true
+          },
+          {
+            "type": "dji_downloads",
+            "url": "https://www.dji.com/downloads/products/mini-5-pro#doc",
+            "allow_empty": true,
+            "treat_404_as_empty": true
+          }
+        ]
       },
       "wa520": {
         "type": "dji_downloads",
