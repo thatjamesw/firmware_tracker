@@ -86,7 +86,7 @@ jobs:
 
       - name: Create or Update Sync PR
         id: cpr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.FW_BOT_TOKEN || github.token }}
           commit-message: "chore: sync firmware data from official sources and regenerate assets"
