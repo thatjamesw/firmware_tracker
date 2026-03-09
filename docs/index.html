@@ -353,11 +353,20 @@
       return `${years} year${years === 1 ? "" : "s"}`;
     }
 
-    const UTC_TO_LOCAL_FORMATTER = new Intl.DateTimeFormat(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZoneName: "short"
-    });
+    const UTC_TO_LOCAL_FORMATTER = (() => {
+      try {
+        return new Intl.DateTimeFormat(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+          timeZoneName: "short"
+        });
+      } catch (_err) {
+        return new Intl.DateTimeFormat(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short"
+        });
+      }
+    })();
 
     function formatUtcAsLocalDateTime(utcIsoText) {
       if (!utcIsoText) return "";
