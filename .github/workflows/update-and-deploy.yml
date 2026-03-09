@@ -66,10 +66,10 @@ jobs:
 
       - name: Fetch tracked firmware details from official sources
         run: |
-          python scripts/fetch_firmware_details.py || (
+          python scripts/fetch_firmware_details.py --debug-device wa150 || (
             echo "First fetch attempt failed, retrying after 20s..."
             sleep 20
-            python scripts/fetch_firmware_details.py
+            python scripts/fetch_firmware_details.py --debug-device wa150
           )
 
       - name: Generate browser assets
