@@ -353,6 +353,18 @@
       return `${years} year${years === 1 ? "" : "s"}`;
     }
 
+    function formatUtcAsLocalDateTime(utcIsoText) {
+      if (!utcIsoText) return "";
+      const parsed = new Date(utcIsoText);
+      if (Number.isNaN(parsed.getTime())) return "";
+      const formatter = new Intl.DateTimeFormat(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZoneName: "short"
+      });
+      return formatter.format(parsed);
+    }
+
     function getLatestActiveRelease(releases) {
       const active = releases.filter((r) => r.active === true);
       if (!active.length) return null;
@@ -590,9 +602,20 @@
 
     function initToolbar() {
       const meta = document.getElementById("meta");
-      meta.textContent = TRACKER_CONFIG && TRACKER_CONFIG.generated_at_utc
-        ? `Last generated (UTC): ${TRACKER_CONFIG.generated_at_utc}`
-        : "Last generated: unknown";
+      if (TRACKER_CONFIG && TRACKER_CONFIG.generated_at_utc) {
+        const utcText = TRACKER_CONFIG.generated_at_utc;
+        const localText = formatUtcAsLocalDateTime(utcText);
+        if (localText) {
+          meta.textContent = `Last generated (local): ${localText}`;
+          meta.title = `UTC: ${utcText}`;
+        } else {
+          meta.textContent = `Last generated (UTC): ${utcText}`;
+          meta.title = "";
+        }
+      } else {
+        meta.textContent = "Last generated: unknown";
+        meta.title = "";
+      }
 
       const refreshBtn = document.getElementById("refresh-now");
       const reloadBtn = document.getElementById("reload-data");
