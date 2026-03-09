@@ -156,10 +156,21 @@ def parse_dji_release_pdf(pdf_bytes: bytes, device_name: str) -> list[dict[str, 
 
 
 def sync_dji_downloads(device_name: str, source: dict[str, Any], timeout: int) -> list[dict[str, Any]]:
+    debug = bool(source.get("_debug"))
+    debug_prefix = str(source.get("_debug_prefix") or "[debug dji]")
+
     url = source["url"]
+    if debug:
+        print(f"{debug_prefix} dji page fetch url={url}")
     html = fetch_bytes(url, timeout=timeout).decode("utf-8", errors="replace")
     items = parse_dji_release_note_items(html)
+    if debug:
+        print(f"{debug_prefix} dji release-note items={len(items)}")
     rn_pdfs = pick_dji_release_notes_pdfs(items, device_name)
+    if debug:
+        print(f"{debug_prefix} dji candidate pdfs={len(rn_pdfs)}")
+        for idx, rn_pdf in enumerate(rn_pdfs[:5], start=1):
+            print(f"{debug_prefix} dji pdf[{idx}]={rn_pdf}")
     if not rn_pdfs:
         return []
     last_exc: Exception | None = None
@@ -168,15 +179,21 @@ def sync_dji_downloads(device_name: str, source: dict[str, Any], timeout: int) -
     all_fetch_errors_were_404 = True
     for rn_pdf in rn_pdfs:
         try:
+            if debug:
+                print(f"{debug_prefix} dji fetching pdf={rn_pdf}")
             pdf_bytes = fetch_bytes(rn_pdf, timeout=timeout)
         except Exception as exc:  # noqa: BLE001
             last_exc = exc
+            if debug:
+                print(f"{debug_prefix} dji pdf fetch failed: {exc}")
             saw_fetch_error = True
             if not (isinstance(exc, urllib.error.HTTPError) and exc.code == 404):
                 all_fetch_errors_were_404 = False
                 last_non_404_exc = exc
             continue
         releases = parse_dji_release_pdf(pdf_bytes, device_name)
+        if debug:
+            print(f"{debug_prefix} dji pdf parsed releases={len(releases)}")
         if releases:
             return releases
     # Some DJI pages occasionally keep stale release-note links; treat 404-only PDF failures as no entries.

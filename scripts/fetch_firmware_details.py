@@ -62,6 +62,13 @@ def is_http_404_error(exc: Exception) -> bool:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Sync tracked device firmware from official vendor pages")
     parser.add_argument("--dry-run", action="store_true", help="Show changes without writing file")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose source diagnostics")
+    parser.add_argument(
+        "--debug-device",
+        action="append",
+        default=[],
+        help="Device ID to emit detailed diagnostics for (can be repeated)",
+    )
     parser.add_argument("--timeout", type=int, default=30, help="HTTP timeout seconds")
     parser.add_argument("--max-workers", type=int, default=8, help="Max parallel device workers")
     parser.add_argument("--retries", type=int, default=3, help="HTTP retries per request")
@@ -148,8 +155,14 @@ def process_device(
     device_name: str,
     source: dict[str, Any] | None,
     timeout: int,
+    verbose: bool = False,
+    debug_devices: set[str] | None = None,
 ) -> dict[str, Any]:
+    debug_enabled = verbose or (bool(debug_devices) and device_id in (debug_devices or set()))
+    debug_prefix = f"[debug {device_id}]"
     if not isinstance(source, dict):
+        if debug_enabled:
+            print(f"{debug_prefix} no source configured")
         return {
             "device_id": device_id,
             "status": "missing_source",
@@ -169,9 +182,20 @@ def process_device(
         source_type = str(candidate.get("type") or "")
         vendor = SOURCE_VENDOR.get(source_type, "unknown")
         used_fallback = idx > 0
+        candidate_url = str(candidate.get("url") or candidate.get("page_url") or "")
+        candidate_for_run = dict(candidate)
+        if debug_enabled:
+            candidate_for_run["_debug"] = True
+            candidate_for_run["_debug_prefix"] = debug_prefix
+            print(
+                f"{debug_prefix} attempt={idx + 1}/{len(attempts)} "
+                f"type={source_type} fallback={used_fallback} url={candidate_url}"
+            )
         try:
-            releases = normalize_releases(sync_device(device_name, candidate, timeout))
+            releases = normalize_releases(sync_device(device_name, candidate_for_run, timeout))
         except Exception as exc:  # noqa: BLE001
+            if debug_enabled:
+                print(f"{debug_prefix} attempt failed: {exc}")
             if is_http_404_error(exc) and bool(candidate.get("treat_404_as_empty")):
                 status = "ok_empty" if bool(candidate.get("allow_empty")) else "no_entries"
                 reason = "404 treated as empty result by source policy"
@@ -185,6 +209,8 @@ def process_device(
                     "used_fallback": used_fallback,
                 }
                 if status == "ok_empty" and idx >= len(attempts) - 1:
+                    if debug_enabled:
+                        print(f"{debug_prefix} final status={status} reason={reason}")
                     return last_result
                 continue
             status = "transient_error" if is_transient_network_error(exc) else "error"
@@ -213,9 +239,17 @@ def process_device(
             }
             # If a fallback source exists, do not stop on an empty primary result.
             if status == "ok_empty" and idx >= len(attempts) - 1:
+                if debug_enabled:
+                    print(f"{debug_prefix} final status={status} reason={reason}")
                 return last_result
             continue
 
+        if debug_enabled:
+            latest = releases[0] if releases else {}
+            print(
+                f"{debug_prefix} parsed releases={len(releases)} "
+                f"latest={latest.get('version')}@{latest.get('released_time')}"
+            )
         return {
             "device_id": device_id,
             "status": "ok",
@@ -227,6 +261,8 @@ def process_device(
         }
 
     if last_result:
+        if debug_enabled:
+            print(f"{debug_prefix} final status={last_result.get('status')} reason={last_result.get('reason')}")
         return last_result
     return {
         "device_id": device_id,
@@ -376,6 +412,7 @@ def main() -> int:
         return 1
 
     configure_fetch(retries=args.retries, retry_backoff=args.retry_backoff)
+    debug_devices = set(str(device_id).strip() for device_id in (args.debug_device or []) if str(device_id).strip())
 
     tracked = list_tracked_devices(payload)
     device_sources = payload.get("sources", {}).get("device_sources", {})
@@ -396,6 +433,8 @@ def main() -> int:
                     device_name,
                     device_sources.get(device_id),
                     args.timeout,
+                    args.verbose,
+                    debug_devices,
                 )
             )
 
