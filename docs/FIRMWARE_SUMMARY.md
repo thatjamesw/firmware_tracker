@@ -1,6 +1,6 @@
 # Firmware Summary
 
-Generated (UTC): 2026-03-17T06:59:33Z
+Generated (UTC): 2026-03-18T06:57:59Z
 
 | Category | Device | Latest | Released | Age | Source | Status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -17,6 +17,6 @@ Generated (UTC): 2026-03-17T06:59:33Z
 | Lighting | Godox X3Pro S | 1.03 | 2026-01-26 | 1 month | godox_listing | ok |
 | Maker | Bambu Lab P1S 3D Printer | 01.09.01.00 | 2026-01-14 | 2 months | bambu_wiki | ok |
 | Platforms | AirPods Pro 3 | 8B34 | 2026-01-13 | 2 months | apple_support | ok |
-| Platforms | iOS | 26.3.1 | 2026-03-04 | 13 days | apple_support | ok |
-| Platforms | macOS | 26.3.1 | 2026-03-04 | 13 days | apple_support | ok |
+| Platforms | iOS | 26.3.1 | 2026-03-17 | 1 day | apple_support | ok |
+| Platforms | macOS | 26.3.1 | 2026-03-04 | 14 days | apple_support | ok |
 | Platforms | watchOS | 26.3 | 2026-02-11 | 1 month | apple_support | ok |
