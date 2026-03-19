@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Firmware Tracker FW">
+  <rect x="3" y="3" width="58" height="58" rx="14" fill="#111111"/>
+  <rect x="3" y="3" width="58" height="8" rx="4" fill="#d7263d"/>
+  <path d="M14 18h18v6H20v8h10v6H20v12h-6V18z" fill="#ffffff"/>
+  <path d="M33 18l4 21 5-14h4l5 14 4-21h6l-7 32h-5l-5-14-5 14h-5l-7-32h5z" fill="#ffffff"/>
+</svg>

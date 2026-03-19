@@ -124,19 +124,19 @@
       "apple_ios": {
         "type": "apple_support",
         "kind": "ios",
-        "page_url": "https://support.apple.com/ios",
+        "page_url": "https://support.apple.com/en-us/100100",
         "url": "https://support.apple.com/en-us/100100"
       },
       "apple_macos": {
         "type": "apple_support",
         "kind": "macos",
-        "page_url": "https://support.apple.com/macos",
+        "page_url": "https://support.apple.com/en-us/100100",
         "url": "https://support.apple.com/en-us/100100"
       },
       "apple_watchos": {
         "type": "apple_support",
         "kind": "watchos",
-        "page_url": "https://support.apple.com/watchos",
+        "page_url": "https://support.apple.com/en-us/100100",
         "url": "https://support.apple.com/en-us/100100"
       },
       "airpods_pro_3": {

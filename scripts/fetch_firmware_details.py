@@ -140,6 +140,11 @@ def should_accept_release_update(
     if not current_latest or not new_latest:
         return True, ""
 
+    current_version = str(current_latest.get("version") or "").strip()
+    new_version = str(new_latest.get("version") or "").strip()
+    if current_version and new_version and current_version == new_version:
+        return False, "guardrail: latest version unchanged"
+
     current_date = parse_iso_date(str(current_latest.get("released_time") or ""))
     new_date = parse_iso_date(str(new_latest.get("released_time") or ""))
     if current_date and new_date and new_date < current_date:
