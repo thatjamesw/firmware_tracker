@@ -142,11 +142,19 @@ def should_accept_release_update(
 
     current_version = str(current_latest.get("version") or "").strip()
     new_version = str(new_latest.get("version") or "").strip()
-    if current_version and new_version and current_version == new_version:
-        return False, "guardrail: latest version unchanged"
-
     current_date = parse_iso_date(str(current_latest.get("released_time") or ""))
     new_date = parse_iso_date(str(new_latest.get("released_time") or ""))
+    if (
+        isinstance(source, dict)
+        and str(source.get("type") or "") == "apple_support"
+        and current_version
+        and new_version
+        and current_version == new_version
+        and current_date
+        and new_date
+        and new_date > current_date
+    ):
+        return False, "guardrail: apple latest version unchanged but release date moved later"
     if current_date and new_date and new_date < current_date:
         return (
             False,

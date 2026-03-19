@@ -45,7 +45,7 @@ class ParserTests(unittest.TestCase):
         self.assertFalse(accepted)
         self.assertIn("older latest release date", reason)
 
-    def test_release_guardrail_rejects_unchanged_latest_version(self) -> None:
+    def test_release_guardrail_rejects_apple_same_version_with_later_date(self) -> None:
         current = [
             {
                 "version": "26.3.1",
@@ -67,7 +67,31 @@ class ParserTests(unittest.TestCase):
 
         accepted, reason = ffd.should_accept_release_update(current, incoming, {"type": "apple_support"})
         self.assertFalse(accepted)
-        self.assertIn("latest version unchanged", reason)
+        self.assertIn("release date moved later", reason)
+
+    def test_release_guardrail_allows_same_version_when_source_is_not_apple(self) -> None:
+        current = [
+            {
+                "version": "1.2.3",
+                "released_time": "2026-03-04",
+                "release_note": {"en": "current"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+        incoming = [
+            {
+                "version": "1.2.3",
+                "released_time": "2026-03-17",
+                "release_note": {"en": "improved metadata"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+
+        accepted, reason = ffd.should_accept_release_update(current, incoming, {"type": "godox_listing"})
+        self.assertTrue(accepted)
+        self.assertEqual(reason, "")
 
     def test_parse_iso_date_preserves_instant_for_offset_aware_inputs(self) -> None:
         parsed = ffd.parse_iso_date("2026-03-06T10:00:00+02:00")
