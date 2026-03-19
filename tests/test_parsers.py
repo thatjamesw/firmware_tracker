@@ -45,6 +45,78 @@ class ParserTests(unittest.TestCase):
         self.assertFalse(accepted)
         self.assertIn("older latest release date", reason)
 
+    def test_release_guardrail_rejects_apple_same_version_with_later_date(self) -> None:
+        current = [
+            {
+                "version": "26.3.1",
+                "released_time": "2026-03-04",
+                "release_note": {"en": "current"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+        incoming = [
+            {
+                "version": "26.3.1",
+                "released_time": "2026-03-17",
+                "release_note": {"en": "article date changed"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+
+        accepted, reason = ffd.should_accept_release_update(current, incoming, {"type": "apple_support"})
+        self.assertFalse(accepted)
+        self.assertIn("release date moved later", reason)
+
+    def test_release_guardrail_rejects_apple_same_version_when_date_disappears(self) -> None:
+        current = [
+            {
+                "version": "26.3.1",
+                "released_time": "2026-03-04",
+                "release_note": {"en": "current"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+        incoming = [
+            {
+                "version": "26.3.1",
+                "released_time": "",
+                "release_note": {"en": "parser lost date"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+
+        accepted, reason = ffd.should_accept_release_update(current, incoming, {"type": "apple_support"})
+        self.assertFalse(accepted)
+        self.assertIn("date is now missing", reason)
+
+    def test_release_guardrail_allows_same_version_when_source_is_not_apple(self) -> None:
+        current = [
+            {
+                "version": "1.2.3",
+                "released_time": "2026-03-04",
+                "release_note": {"en": "current"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+        incoming = [
+            {
+                "version": "1.2.3",
+                "released_time": "2026-03-17",
+                "release_note": {"en": "improved metadata"},
+                "arb": None,
+                "active": True,
+            }
+        ]
+
+        accepted, reason = ffd.should_accept_release_update(current, incoming, {"type": "godox_listing"})
+        self.assertTrue(accepted)
+        self.assertEqual(reason, "")
+
     def test_parse_iso_date_preserves_instant_for_offset_aware_inputs(self) -> None:
         parsed = ffd.parse_iso_date("2026-03-06T10:00:00+02:00")
         self.assertIsNotNone(parsed)
@@ -101,6 +173,119 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(len(releases), 1)
         self.assertEqual(releases[0]["version"], "26.3.1")
         self.assertEqual(releases[0]["released_time"], "2026-03-04")
+
+    def test_apple_ios_parser_does_not_use_published_date_by_default(self) -> None:
+        html = """
+        <p>The latest version of iOS and iPadOS is 26.3.1.</p>
+        <span>Published Date:</span>&nbsp;<time>March 17, 2026</time>
+        """
+        original_fetch = apple_source.fetch_bytes
+        try:
+            apple_source.fetch_bytes = lambda _url, timeout: html.encode("utf-8")
+            releases = ffd.sync_apple_support(
+                {"url": "https://support.apple.com/en-us/100100", "kind": "ios"},
+                timeout=5,
+            )
+        finally:
+            apple_source.fetch_bytes = original_fetch
+
+        self.assertEqual(len(releases), 1)
+        self.assertEqual(releases[0]["version"], "26.3.1")
+        self.assertEqual(releases[0]["released_time"], "")
+
+    def test_apple_macos_parser_extracts_latest_and_release_date(self) -> None:
+        html = """
+        <p>The latest version of macOS is 26.3.1.</p>
+        <table>
+          <tr>
+            <td><p class="gb-paragraph">macOS Tahoe 26.3.1</p></td>
+            <td><p class="gb-paragraph">macOS Tahoe</p></td>
+            <td><p class="gb-paragraph">04 Mar 2026</p></td>
+          </tr>
+        </table>
+        """
+        original_fetch = apple_source.fetch_bytes
+        try:
+            apple_source.fetch_bytes = lambda _url, timeout: html.encode("utf-8")
+            releases = ffd.sync_apple_support(
+                {"url": "https://support.apple.com/en-us/100100", "kind": "macos"},
+                timeout=5,
+            )
+        finally:
+            apple_source.fetch_bytes = original_fetch
+
+        self.assertEqual(len(releases), 1)
+        self.assertEqual(releases[0]["version"], "26.3.1")
+        self.assertEqual(releases[0]["released_time"], "2026-03-04")
+
+    def test_apple_watchos_parser_extracts_latest_and_release_date(self) -> None:
+        html = (FIXTURES_DIR / "apple_100100.html").read_text(encoding="utf-8")
+        original_fetch = apple_source.fetch_bytes
+        try:
+            apple_source.fetch_bytes = lambda _url, timeout: html.encode("utf-8")
+            releases = ffd.sync_apple_support(
+                {"url": "https://support.apple.com/en-us/100100", "kind": "watchos"},
+                timeout=5,
+            )
+        finally:
+            apple_source.fetch_bytes = original_fetch
+
+        self.assertEqual(len(releases), 1)
+        self.assertEqual(releases[0]["version"], "26.3")
+        self.assertEqual(releases[0]["released_time"], "2026-02-11")
+
+    def test_apple_watchos_parser_does_not_prefix_match_patch_version_row(self) -> None:
+        html = """
+        <p>The latest version of watchOS is 26.3.</p>
+        <table>
+          <tr>
+            <td><p class="gb-paragraph">watchOS 26.3.1</p></td>
+            <td><p class="gb-paragraph">Apple Watch</p></td>
+            <td><p class="gb-paragraph">17 Mar 2026</p></td>
+          </tr>
+          <tr>
+            <td><p class="gb-paragraph">watchOS 26.3</p></td>
+            <td><p class="gb-paragraph">Apple Watch</p></td>
+            <td><p class="gb-paragraph">11 Feb 2026</p></td>
+          </tr>
+        </table>
+        """
+        original_fetch = apple_source.fetch_bytes
+        try:
+            apple_source.fetch_bytes = lambda _url, timeout: html.encode("utf-8")
+            releases = ffd.sync_apple_support(
+                {"url": "https://support.apple.com/en-us/100100", "kind": "watchos"},
+                timeout=5,
+            )
+        finally:
+            apple_source.fetch_bytes = original_fetch
+
+        self.assertEqual(len(releases), 1)
+        self.assertEqual(releases[0]["version"], "26.3")
+        self.assertEqual(releases[0]["released_time"], "2026-02-11")
+
+    def test_apple_ios_parser_can_fallback_to_published_date_when_enabled(self) -> None:
+        html = """
+        <p>The latest version of iOS and iPadOS is 26.3.1.</p>
+        <span>Published Date:</span>&nbsp;<time>March 17, 2026</time>
+        """
+        original_fetch = apple_source.fetch_bytes
+        try:
+            apple_source.fetch_bytes = lambda _url, timeout: html.encode("utf-8")
+            releases = ffd.sync_apple_support(
+                {
+                    "url": "https://support.apple.com/en-us/100100",
+                    "kind": "ios",
+                    "fallback_to_published_date": True,
+                },
+                timeout=5,
+            )
+        finally:
+            apple_source.fetch_bytes = original_fetch
+
+        self.assertEqual(len(releases), 1)
+        self.assertEqual(releases[0]["version"], "26.3.1")
+        self.assertEqual(releases[0]["released_time"], "2026-03-17")
 
     def test_apple_airpods_parser_extracts_latest_and_published_date(self) -> None:
         html = (FIXTURES_DIR / "apple_106340.html").read_text(encoding="utf-8")
