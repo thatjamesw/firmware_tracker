@@ -148,7 +148,7 @@
       }
     },
     "sync_status": {
-      "last_run_utc": "2026-03-21T06:37:50Z",
+      "last_run_utc": "2026-03-22T06:45:27Z",
       "health_counts": {
         "ok": 16,
         "ok_empty": 1,
@@ -171,7 +171,7 @@
           ],
           "transient_count": 0,
           "last_success_utc": "2026-03-19T06:54:05Z",
-          "consecutive_failures": 3,
+          "consecutive_failures": 4,
           "last_error_type": "guardrail_rejected"
         },
         "atomos": {
@@ -179,7 +179,7 @@
           "ok_count": 1,
           "issues": [],
           "transient_count": 0,
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": ""
         },
@@ -188,7 +188,7 @@
           "ok_count": 1,
           "issues": [],
           "transient_count": 0,
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": ""
         },
@@ -197,7 +197,7 @@
           "ok_count": 3,
           "issues": [],
           "transient_count": 0,
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": ""
         },
@@ -206,7 +206,7 @@
           "ok_count": 5,
           "issues": [],
           "transient_count": 0,
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": ""
         },
@@ -215,7 +215,7 @@
           "ok_count": 2,
           "issues": [],
           "transient_count": 0,
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": ""
         }
@@ -224,7 +224,7 @@
         "airpods_pro_3": {
           "vendor": "apple",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -232,7 +232,7 @@
         "amaran_300c": {
           "vendor": "static",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -240,7 +240,7 @@
         "apple_ios": {
           "vendor": "apple",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -249,14 +249,14 @@
           "vendor": "apple",
           "status": "guardrail_rejected",
           "last_success_utc": "2026-03-19T06:54:05Z",
-          "consecutive_failures": 3,
+          "consecutive_failures": 4,
           "last_error_type": "guardrail_rejected",
           "last_error_reason": "guardrail: apple latest version unchanged but release date moved later"
         },
         "apple_watchos": {
           "vendor": "apple",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -264,7 +264,7 @@
         "atomos_ninja_v": {
           "vendor": "atomos",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -272,7 +272,7 @@
         "bambu_p1s": {
           "vendor": "bambu",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -280,7 +280,7 @@
         "dell_u4025qw": {
           "vendor": "static",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -288,7 +288,7 @@
         "godox_ad400proii": {
           "vendor": "godox",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -296,7 +296,7 @@
         "godox_v860iis": {
           "vendor": "godox",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -304,7 +304,7 @@
         "godox_x3pros": {
           "vendor": "godox",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -312,7 +312,7 @@
         "sony_1635gm2": {
           "vendor": "sony",
           "status": "ok_empty",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -320,7 +320,7 @@
         "sony_2470gm2": {
           "vendor": "sony",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -328,7 +328,7 @@
         "sony_24f14gm": {
           "vendor": "sony",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -336,7 +336,7 @@
         "sony_70200gm2": {
           "vendor": "sony",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -344,7 +344,7 @@
         "sony_a1ii": {
           "vendor": "sony",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -352,7 +352,7 @@
         "wa150": {
           "vendor": "dji",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -360,7 +360,7 @@
         "wa520": {
           "vendor": "dji",
           "status": "ok",
-          "last_success_utc": "2026-03-21T06:37:50Z",
+          "last_success_utc": "2026-03-22T06:45:27Z",
           "consecutive_failures": 0,
           "last_error_type": "",
           "last_error_reason": ""
@@ -372,14 +372,14 @@
           "device_id": "apple_macos",
           "status": "guardrail_rejected",
           "reason": "guardrail: apple latest version unchanged but release date moved later",
-          "streak_days": 3
+          "streak_days": 4
         }
       ],
       "transient_issues": [],
       "issue_streaks": {
-        "apple:apple_macos": 3
+        "apple:apple_macos": 4
       },
-      "max_issue_streak_days": 3
+      "max_issue_streak_days": 4
     }
   },
   "categories": {
