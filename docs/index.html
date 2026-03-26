@@ -13,8 +13,35 @@
 </head>
 <body>
   <header>
-    <h1>Firmware Tracker</h1>
-    <p class="subtitle">All devices in one table</p>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Personal Firmware Monitor</p>
+        <h1>Firmware Tracker</h1>
+        <p class="subtitle lede">One place to watch cameras, drones, lighting, platforms, and maker gear without bouncing between vendor portals.</p>
+      </div>
+      <div class="hero-chips">
+        <div class="chip"><strong id="hero-device-count">0</strong> tracked devices</div>
+        <div class="chip"><strong id="hero-category-count">0</strong> categories</div>
+        <div class="chip"><strong id="hero-fresh-count">0</strong> current releases detected</div>
+      </div>
+      <div class="workflow-strip">
+        <div class="workflow-step">
+          <span class="workflow-kicker">1. Sync</span>
+          <strong>Official sources only</strong>
+          <p>Firmware data is fetched from vendor pages, support matrices, and release notes.</p>
+        </div>
+        <div class="workflow-step">
+          <span class="workflow-kicker">2. Review</span>
+          <strong>One fast table</strong>
+          <p>Latest versions, release dates, age, and full history stay visible in one place.</p>
+        </div>
+        <div class="workflow-step">
+          <span class="workflow-kicker">3. Act</span>
+          <strong>Open vendor page</strong>
+          <p>Jump straight to the official download page when something new lands.</p>
+        </div>
+      </div>
+    </section>
   </header>
 
   <main class="container">
@@ -195,6 +222,20 @@
       }
 
       return { newDeviceIds, current, hasBaseline: true };
+    }
+
+    function initHero(rows) {
+      const deviceCount = rows.length;
+      const categoryCount = new Set(rows.map((row) => row.categoryId)).size;
+      const freshCount = rows.filter((row) => row.latest).length;
+
+      const deviceCountEl = document.getElementById("hero-device-count");
+      const categoryCountEl = document.getElementById("hero-category-count");
+      const freshCountEl = document.getElementById("hero-fresh-count");
+
+      if (deviceCountEl) deviceCountEl.textContent = String(deviceCount);
+      if (categoryCountEl) categoryCountEl.textContent = String(categoryCount);
+      if (freshCountEl) freshCountEl.textContent = String(freshCount);
     }
 
     function getDeviceDownloadPage(deviceId) {
@@ -488,6 +529,7 @@
 
     const rows = getAllRows();
     const detection = detectNewFirmware(rows);
+    initHero(rows);
     initSourceBanner();
     initToolbar();
     renderTable(detection.newDeviceIds);
