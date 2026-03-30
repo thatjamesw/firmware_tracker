@@ -1,2 +1,2 @@
-pypdf==6.9.1
+pypdf==6.9.2
 jsonschema==4.26.0
