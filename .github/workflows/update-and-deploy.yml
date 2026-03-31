@@ -3,11 +3,7 @@ name: Update and Deploy Firmware Tracker
 on:
   workflow_dispatch:
   schedule:
-    # 08:00 Europe/Helsinki across DST changes (EET/EEST):
-    # - 05:00 UTC hits 08:00 during EEST (UTC+3)
-    # - 06:00 UTC hits 08:00 during EET  (UTC+2)
-    - cron: '0 5 * * *'
-    - cron: '0 6 * * *'
+    - cron: '15 5 * * *'
 
 permissions:
   contents: read
@@ -17,31 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  schedule-gate:
-    runs-on: ubuntu-latest
-    permissions: {}
-    outputs:
-      run_now: ${{ steps.gate.outputs.run_now }}
-    steps:
-      - name: Decide whether to run now (08:00 Europe/Helsinki)
-        id: gate
-        run: |
-          if [[ "${{ github.event_name }}" != "schedule" ]]; then
-            echo "run_now=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          local_hour="$(TZ=Europe/Helsinki date +%H)"
-          if [[ "$local_hour" == "08" ]]; then
-            echo "run_now=true" >> "$GITHUB_OUTPUT"
-            echo "It is 08:00 Europe/Helsinki. Proceeding."
-          else
-            echo "run_now=false" >> "$GITHUB_OUTPUT"
-            echo "Not 08:00 Europe/Helsinki (current hour: $local_hour). Skipping this run."
-          fi
-
   build:
-    if: needs.schedule-gate.outputs.run_now == 'true'
-    needs: schedule-gate
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
