@@ -1,6 +1,6 @@
 # Firmware Summary
 
-Generated (UTC): 2026-04-02T06:19:10Z
+Generated (UTC): 2026-04-03T06:19:02Z
 
 | Category | Device | Latest | Released | Age | Source | Status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -15,8 +15,8 @@ Generated (UTC): 2026-04-02T06:19:10Z
 | Lighting | Godox AD400 II Pro | 1.20 | 2025-11-26 | 4 months | godox_listing | ok |
 | Lighting | Godox V860II (Sony) | 1.7 | 2018-10-24 | 7 years | godox_listing | ok |
 | Lighting | Godox X3Pro S | 1.03 | 2026-01-26 | 2 months | godox_listing | ok |
-| Maker | Bambu Lab P1S 3D Printer | 01.10.00.00 | 2026-03-30 | 3 days | bambu_wiki | ok |
-| Platforms | AirPods Pro 3 | 8B39 | 2026-03-24 | 9 days | apple_support | guardrail: apple latest version unchanged but release date moved later |
-| Platforms | iOS | 26.4 | 2026-03-24 | 9 days | apple_support | ok |
-| Platforms | macOS | 26.4 | 2026-03-24 | 9 days | apple_support | ok |
-| Platforms | watchOS | 26.4 | 2026-03-24 | 9 days | apple_support | ok |
+| Maker | Bambu Lab P1S 3D Printer | 01.10.00.00 | 2026-03-30 | 4 days | bambu_wiki | ok |
+| Platforms | AirPods Pro 3 | 8B39 | 2026-03-24 | 10 days | apple_support | guardrail: apple latest version unchanged but release date moved later |
+| Platforms | iOS | 26.4 | 2026-03-24 | 10 days | apple_support | ok |
+| Platforms | macOS | 26.4 | 2026-03-24 | 10 days | apple_support | ok |
+| Platforms | watchOS | 26.4 | 2026-03-24 | 10 days | apple_support | ok |
