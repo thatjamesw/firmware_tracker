@@ -379,12 +379,12 @@
           const releasedText = r.latest ? r.latest.released_time : "—";
           const ageText = r.age !== null ? formatAge(r.age) : "—";
           tr.innerHTML = `
-            <td>${escapeHtml(r.category)}</td>
-            <td><span class="device-name">${escapeHtml(r.deviceName)}</span></td>
-            <td><span class="latest-version">${escapeHtml(latestText)}</span>${isNew ? ' <span class="badge new">new</span>' : ""}</td>
-            <td>${escapeHtml(releasedText)}</td>
-            <td><span class="${ageClass}">${ageText}</span></td>
-            <td><button class="ghost">View All (${r.releases.length})</button></td>
+            <td data-label="Category">${escapeHtml(r.category)}</td>
+            <td data-label="Device"><span class="device-name">${escapeHtml(r.deviceName)}</span></td>
+            <td data-label="Latest"><span class="latest-version">${escapeHtml(latestText)}</span>${isNew ? ' <span class="badge new">new</span>' : ""}</td>
+            <td data-label="Released">${escapeHtml(releasedText)}</td>
+            <td data-label="Age"><span class="${ageClass}">${ageText}</span></td>
+            <td data-label="History"><button class="ghost">View All (${r.releases.length})</button></td>
           `;
           tr.querySelector("button").addEventListener("click", () => renderModal(r.deviceId, r.deviceName, r.releases));
           tbody.appendChild(tr);
