@@ -18,6 +18,7 @@ from sources import atomos as atomos_source  # noqa: E402
 from sources import bambu as bambu_source  # noqa: E402
 from sources import common as common_source  # noqa: E402
 from sources import dji as dji_source  # noqa: E402
+from sources import tplink as tplink_source  # noqa: E402
 
 
 class ParserTests(unittest.TestCase):
@@ -357,6 +358,45 @@ class ParserTests(unittest.TestCase):
 
         self.assertEqual(len(releases), 1)
         self.assertEqual(releases[0]["version"], "11.19.00")
+
+    def test_tplink_download_parser_extracts_latest_firmware(self) -> None:
+        html = """
+        <h2>Firmware</h2>
+        Deco BE65(EU)_V2_1.2.0 Build 20250718
+        Download
+        Published Date: 2025-08-12  Language: Multi-language  File Size: 42.65 MB
+        New Features/Enhancements:
+        1. Improve security and stability.
+        2. Optimized the roaming experience.
+        Bug Fixes:
+        1.Fixed the bug that the NAT forwarding function does not work for guest wireless clients in some cases.
+        Note: This firmware can not be degraded to the previous version.
+        Deco BE65(EU)_V2_1.1.7 Build 20250324
+        Download
+        Published Date: 2025-07-17  Language: Multi-language  File Size: 45.47 MB
+        New Features/Enhancements:
+        1. Improved the stability and security of the system.
+        """
+        original_fetch = tplink_source.fetch_bytes
+        try:
+            tplink_source.fetch_bytes = lambda _url, timeout: html.encode("utf-8")
+            releases = ffd.sync_tplink_downloads(
+                {
+                    "type": "tplink_downloads",
+                    "url": "https://www.tp-link.com/nordic/support/download/deco-be65/#Firmware",
+                    "model": "Deco BE65",
+                    "hardware_version": "V2",
+                },
+                timeout=5,
+            )
+        finally:
+            tplink_source.fetch_bytes = original_fetch
+
+        self.assertEqual(len(releases), 1)
+        self.assertEqual(releases[0]["version"], "1.2.0")
+        self.assertEqual(releases[0]["released_time"], "2025-08-12")
+        self.assertEqual(releases[0]["evidence"]["type"], "tplink_download_item")
+        self.assertIn("Build: 20250718", releases[0]["release_note"]["en"])
 
     def test_parse_iso_date_preserves_instant_for_offset_aware_inputs(self) -> None:
         parsed = ffd.parse_iso_date("2026-03-06T10:00:00+02:00")

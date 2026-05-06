@@ -1,6 +1,6 @@
 # Firmware Summary
 
-Generated (UTC): 2026-05-05T07:27:19Z
+Generated (UTC): 2026-05-06T08:56:40Z
 
 | Category | Device | Latest | Released | Age | Source | Status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -12,11 +12,12 @@ Generated (UTC): 2026-05-05T07:27:19Z
 | Cameras | Sony A1 II | 4.00 | 2025-10-30 | 6 months | sony_cscs | ok |
 | Consumer Drones | Avata 2 | 01.00.0400 | 2024-11-06 | 1 year | dji_downloads | ok |
 | Consumer Drones | Mini 5 Pro | 01.00.0400 | 2025-12-10 | 4 months | dji_downloads | ok |
-| Lighting | Godox AD400 II Pro | 1.21 | 2026-04-28 | 7 days | godox_listing | ok |
+| Lighting | Godox AD400 II Pro | 1.21 | 2026-04-28 | 8 days | godox_listing | ok |
 | Lighting | Godox V860II (Sony) | 1.7 | 2018-10-24 | 7 years | godox_listing | ok |
 | Lighting | Godox X3Pro S | 1.03 | 2026-01-26 | 3 months | godox_listing | ok |
 | Maker | Bambu Lab P1S 3D Printer | 01.10.00.00 | 2026-03-30 | 1 month | bambu_wiki | ok |
-| Platforms | AirPods Pro 3 | 8B40 | 2026-04-30 | 5 days | apple_support | ok |
-| Platforms | iOS | 26.4.2 | 2026-04-22 | 13 days | apple_support | ok |
-| Platforms | macOS | 26.4.1 | 2026-04-09 | 26 days | apple_support | ok |
+| Networking | TP-Link Deco BE65 v2 | 1.2.0 | 2025-08-12 | 8 months | tplink_downloads | ok |
+| Platforms | AirPods Pro 3 | 8B40 | 2026-04-30 | 6 days | apple_support | ok |
+| Platforms | iOS | 26.4.2 | 2026-04-22 | 14 days | apple_support | ok |
+| Platforms | macOS | 26.4.1 | 2026-04-09 | 27 days | apple_support | ok |
 | Platforms | watchOS | 26.4 | 2026-03-24 | 1 month | apple_support | ok |
