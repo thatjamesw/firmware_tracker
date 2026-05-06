@@ -115,9 +115,9 @@ Recommended GitHub branch protection:
   - Per-device and per-vendor health is tracked (`consecutive_failures`, `last_success_utc`, `last_error_type`) for better diagnostics.
   - Strict mode: `python scripts/fetch_firmware_details.py --fail-on-regression` is used by the scheduled deploy workflow.
 - UI is single-table for all devices and includes:
-  - Compact metrics for tracked devices, categories, current releases, and source health
+  - A firmware status summary that changes when unseen firmware is detected
   - Last generated timestamp
   - Source issue banner when a vendor feed is failing (for example DJI parsing errors)
-  - New-firmware banner and row highlights based on what your browser has previously seen (`Mark as Seen` to clear)
+  - New-firmware status and row highlights based on what your browser has previously seen (`Mark as Seen` to clear)
   - `View All` cards include an `Open official download page` link (landing page, not direct binary URL)
 - Devices without configured sources are skipped.

@@ -17,23 +17,16 @@
       <h1>Firmware Tracker</h1>
     </header>
 
-    <section class="workflow-strip" aria-label="Tracker metrics">
-      <article class="workflow-step">
-        <span class="workflow-kicker">Devices</span>
-        <strong id="hero-device-count">0</strong>
-      </article>
-      <article class="workflow-step">
-        <span class="workflow-kicker">Categories</span>
-        <strong id="hero-category-count">0</strong>
-      </article>
-      <article class="workflow-step">
-        <span class="workflow-kicker">Current</span>
-        <strong id="hero-fresh-count">0</strong>
-      </article>
-      <article class="workflow-step">
-        <span class="workflow-kicker">Source Health</span>
-        <strong id="hero-health-count">0</strong>
-      </article>
+    <section class="firmware-status" id="firmware-status" aria-label="Firmware update status">
+      <div>
+        <span class="section-label">Firmware Status</span>
+        <strong id="firmware-status-title">No new firmware</strong>
+        <p id="firmware-status-detail" hidden></p>
+        <span class="firmware-status-meta" id="firmware-status-meta">Last generated: unknown</span>
+      </div>
+      <div class="updates-actions" id="firmware-status-actions" hidden>
+        <button class="primary" id="mark-updates-seen">Mark as Seen</button>
+      </div>
     </section>
 
     <section class="tracker-surface">
@@ -42,16 +35,6 @@
         <div class="updates-actions">
           <button class="ghost" id="hide-source-banner">Hide</button>
         </div>
-      </div>
-      <div class="updates-banner" id="updates-banner">
-        <div id="updates-text"></div>
-        <div class="updates-actions">
-          <button class="primary" id="mark-updates-seen">Mark as Seen</button>
-          <button class="ghost" id="hide-updates-banner">Hide</button>
-        </div>
-      </div>
-      <div class="toolbar">
-        <div class="meta" id="meta">Last generated: unknown</div>
       </div>
       <div class="table-wrap" id="table-container"></div>
     </section>
@@ -247,22 +230,46 @@
       return { newDeviceIds, current, hasBaseline: true };
     }
 
-    function initHero(rows) {
-      const deviceCount = rows.length;
-      const categoryCount = new Set(rows.map((row) => row.categoryId)).size;
-      const freshCount = rows.filter((row) => row.latest).length;
-      const vendorHealth = (TRACKER_CONFIG && TRACKER_CONFIG.source_sync_status && TRACKER_CONFIG.source_sync_status.vendor_health) || {};
-      const healthyVendors = Object.values(vendorHealth).filter((entry) => entry && entry.status === "ok").length;
+    function updateFirmwareStatus(rows, newDeviceIds) {
+      const statusEl = document.getElementById("firmware-status");
+      const titleEl = document.getElementById("firmware-status-title");
+      const detailEl = document.getElementById("firmware-status-detail");
+      const actionsEl = document.getElementById("firmware-status-actions");
+      if (!statusEl || !titleEl || !detailEl || !actionsEl) return;
 
-      const deviceCountEl = document.getElementById("hero-device-count");
-      const categoryCountEl = document.getElementById("hero-category-count");
-      const freshCountEl = document.getElementById("hero-fresh-count");
-      const healthCountEl = document.getElementById("hero-health-count");
+      const newCount = newDeviceIds && newDeviceIds.size ? newDeviceIds.size : 0;
+      statusEl.classList.toggle("has-updates", newCount > 0);
+      actionsEl.hidden = newCount === 0;
 
-      if (deviceCountEl) deviceCountEl.textContent = String(deviceCount);
-      if (categoryCountEl) categoryCountEl.textContent = String(categoryCount);
-      if (freshCountEl) freshCountEl.textContent = String(freshCount);
-      if (healthCountEl) healthCountEl.textContent = String(healthyVendors);
+      if (!newCount) {
+        titleEl.textContent = "No new firmware";
+        detailEl.textContent = "";
+        detailEl.hidden = true;
+        return;
+      }
+
+      const changedDevices = rows
+        .filter((row) => newDeviceIds.has(row.deviceId))
+        .map((row) => row.deviceName);
+      const preview = changedDevices.slice(0, 4).join(", ");
+      const extraCount = changedDevices.length - Math.min(changedDevices.length, 4);
+      titleEl.textContent = newCount === 1 ? "1 new firmware update" : `${newCount} new firmware updates`;
+      detailEl.textContent = extraCount > 0
+        ? `${preview}, +${extraCount} more.`
+        : preview;
+      detailEl.hidden = false;
+    }
+
+    function initFirmwareStatus(rows, newDeviceIds, currentSnapshot) {
+      const markSeenBtn = document.getElementById("mark-updates-seen");
+      updateFirmwareStatus(rows, newDeviceIds);
+
+      if (!markSeenBtn) return;
+      markSeenBtn.addEventListener("click", () => {
+        saveSeenVersions(currentSnapshot);
+        updateFirmwareStatus(rows, new Set());
+        renderTable(new Set());
+      });
     }
 
     function getDeviceDownloadPage(deviceId) {
@@ -324,7 +331,7 @@
         ["Latest", "version"],
         ["Released", "date"],
         ["Age", "age"],
-        ["Actions", null]
+        ["History", null]
       ];
 
       let rows = getAllRows();
@@ -408,41 +415,9 @@
       container.appendChild(table);
     }
 
-    function initUpdatesBanner(rows, newDeviceIds, currentSnapshot) {
-      const banner = document.getElementById("updates-banner");
-      const text = document.getElementById("updates-text");
-      const markSeenBtn = document.getElementById("mark-updates-seen");
-      const hideBtn = document.getElementById("hide-updates-banner");
-
-      if (!newDeviceIds || !newDeviceIds.size) {
-        banner.classList.remove("active");
-        return;
-      }
-
-      const changedDevices = rows
-        .filter((row) => newDeviceIds.has(row.deviceId))
-        .map((row) => row.deviceName);
-      const preview = changedDevices.slice(0, 4).join(", ");
-      const extraCount = changedDevices.length - Math.min(changedDevices.length, 4);
-      text.textContent = extraCount > 0
-        ? `New firmware detected for ${changedDevices.length} devices: ${preview}, +${extraCount} more.`
-        : `New firmware detected for ${changedDevices.length} devices: ${preview}.`;
-
-      banner.classList.add("active");
-
-      markSeenBtn.addEventListener("click", () => {
-        saveSeenVersions(currentSnapshot);
-        banner.classList.remove("active");
-        renderTable(new Set());
-      });
-
-      hideBtn.addEventListener("click", () => {
-        banner.classList.remove("active");
-      });
-    }
-
-    function initToolbar() {
-      const meta = document.getElementById("meta");
+    function initGeneratedAtStatus() {
+      const meta = document.getElementById("firmware-status-meta");
+      if (!meta) return;
       if (TRACKER_CONFIG && TRACKER_CONFIG.generated_at_utc) {
         const utcText = TRACKER_CONFIG.generated_at_utc;
         const localText = formatUtcAsLocalDateTime(utcText);
@@ -542,11 +517,10 @@
 
     const rows = getAllRows();
     const detection = detectNewFirmware(rows);
-    initHero(rows);
+    initFirmwareStatus(rows, detection.newDeviceIds, detection.current);
     initSourceBanner();
-    initToolbar();
+    initGeneratedAtStatus();
     renderTable(detection.newDeviceIds);
-    initUpdatesBanner(rows, detection.newDeviceIds, detection.current);
   </script>
 </body>
 </html>

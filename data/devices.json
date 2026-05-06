@@ -368,7 +368,7 @@
   },
   "categories": {
     "consumer-drones": {
-      "title": "Consumer Drones",
+      "title": "Drones",
       "devices": {
         "wa150": "Mini 5 Pro",
         "wa520": "Avata 2"
@@ -396,13 +396,13 @@
       }
     },
     "maker": {
-      "title": "Maker",
+      "title": "3D Printer",
       "devices": {
         "bambu_p1s": "Bambu Lab P1S 3D Printer"
       }
     },
     "platforms": {
-      "title": "Platforms",
+      "title": "Apple",
       "devices": {
         "apple_ios": "iOS",
         "apple_macos": "macOS",
