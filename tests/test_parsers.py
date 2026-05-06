@@ -875,6 +875,48 @@ class ParserTests(unittest.TestCase):
         self.assertIn("https://example.com/RN/rn-404.pdf", calls)
         self.assertIn("https://example.com/RN/rn-good.pdf", calls)
 
+    def test_dji_release_pdf_parses_single_digit_month_date(self) -> None:
+        class FakePage:
+            def __init__(self, text: str) -> None:
+                self.text = text
+
+            def extract_text(self) -> str:
+                return self.text
+
+        class FakeReader:
+            def __init__(self, _stream: object) -> None:
+                self.pages = [
+                    FakePage(
+                        """
+                        DJI Mini 5 Pro Release Notes
+                        Date: 2026.4.25
+                        Aircraft Firmware: v01.00.0600
+                        Remote Controller Firmware: v01.00.0600 (DJI RC Pro 2)
+                        What's New
+                        • Fixed some known issues.
+                        Notes:
+                        • Camera settings will be reset after firmware update.
+
+                        Date: 2025.12.10
+                        Aircraft Firmware: v01.00.0400
+                        What's New
+                        • Added support for the propeller guard.
+                        """
+                    )
+                ]
+
+        original_reader = dji_source.PdfReader
+        try:
+            dji_source.PdfReader = FakeReader  # type: ignore[assignment]
+            releases = dji_source.parse_dji_release_pdf(b"%PDF-test%", "Mini 5 Pro")
+        finally:
+            dji_source.PdfReader = original_reader
+
+        self.assertEqual(releases[0]["version"], "01.00.0600")
+        self.assertEqual(releases[0]["released_time"], "2026-04-25")
+        self.assertEqual(releases[1]["version"], "01.00.0400")
+        self.assertEqual(releases[1]["released_time"], "2025-12-10")
+
     def test_dji_parser_returns_empty_when_all_pdf_links_404(self) -> None:
         html = """
         <li class="groups-download-item">
