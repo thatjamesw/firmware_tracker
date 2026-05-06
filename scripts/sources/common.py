@@ -84,8 +84,11 @@ def extract_attr(tag_html: str, attr_name: str) -> str:
 
 def as_iso_date(date_text: str) -> str:
     clean = date_text.strip().replace(".", "-").replace("/", "-")
-    match = re.search(r"(\d{4}-\d{2}-\d{2})", clean)
-    return match.group(1) if match else ""
+    match = re.search(r"(\d{4})-(\d{1,2})-(\d{1,2})", clean)
+    if not match:
+        return ""
+    year, month, day = match.groups()
+    return f"{year}-{int(month):02d}-{int(day):02d}"
 
 
 def parse_human_date_to_iso(date_text: str) -> str:

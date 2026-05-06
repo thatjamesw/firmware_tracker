@@ -3,9 +3,9 @@ name: Update and Deploy Firmware Tracker
 on:
   workflow_dispatch:
   schedule:
-    # Around 08:00 Europe/Helsinki year-round. Avoid :00 because GitHub
-    # scheduled workflows are more likely to be delayed or dropped then.
-    - cron: '17 8 * * *'
+    # Start early so the generated site is usually ready by 08:00 Europe/Helsinki.
+    # Avoid :00 because GitHub scheduled workflows are more likely to be delayed or dropped then.
+    - cron: '37 6 * * *'
       timezone: Europe/Helsinki
 
 permissions:

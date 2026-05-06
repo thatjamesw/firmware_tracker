@@ -102,7 +102,7 @@ def parse_dji_release_pdf(pdf_bytes: bytes, device_name: str) -> list[dict[str, 
     text = "\n".join((page.extract_text() or "") for page in reader.pages)
     text = text.replace("’", "'").replace("：", ":")
 
-    date_matches = list(re.finditer(r"Date:\s*(\d{4}[.-]\d{2}[.-]\d{2})", text))
+    date_matches = list(re.finditer(r"Date:\s*(\d{4}[.-]\d{1,2}[.-]\d{1,2})", text))
     sections: list[tuple[str, str]] = []
     if date_matches:
         for idx, match in enumerate(date_matches):

@@ -55,8 +55,7 @@ button{
   background:linear-gradient(90deg, transparent, rgba(16,17,20,.08) 18%, rgba(16,17,20,.08) 82%, transparent);
 }
 
-.section-label,
-.workflow-kicker{
+.section-label{
   margin:0;
   color:var(--muted);
   font-size:12px;
@@ -66,10 +65,13 @@ button{
 
 .masthead h1{
   margin:0;
-  font-size:clamp(2rem, 4vw, 3rem);
-  line-height:1;
+  font-family:"SF Pro Display","Segoe UI Variable Display","Inter",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  font-size:clamp(2.35rem, 5vw, 4rem);
+  line-height:.94;
   letter-spacing:0;
-  font-weight:620;
+  font-weight:720;
+  font-variation-settings:"wght" 720;
+  text-wrap:balance;
 }
 
 .updates-actions{
@@ -78,58 +80,59 @@ button{
   gap:10px;
 }
 
-.workflow-strip{
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
+.updates-actions[hidden]{
+  display:none;
+}
+
+.firmware-status{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   gap:18px;
-  padding:14px 0 12px;
+  padding:14px 0 16px;
   border-bottom:1px solid var(--line);
 }
 
-.workflow-step{
-  position:relative;
-  padding-right:14px;
-}
-
-.workflow-step:not(:last-child)::after{
-  content:"";
-  position:absolute;
-  top:2px;
-  right:0;
-  width:1px;
-  height:34px;
-  background:var(--line);
-}
-
-.workflow-step strong{
+.firmware-status strong{
   display:block;
   margin-top:5px;
-  font-size:1.25rem;
-  line-height:1;
+  font-size:1.35rem;
+  line-height:1.08;
   font-weight:620;
 }
 
-.meta{
-  margin:6px 0 0;
+.firmware-status p{
+  max-width:720px;
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:.94rem;
+  line-height:1.42;
+}
+
+.firmware-status p[hidden]{
+  display:none;
+}
+
+.firmware-status-meta{
+  display:block;
+  margin-top:5px;
   color:var(--muted);
   font-size:.82rem;
   line-height:1.42;
+}
+
+.firmware-status.has-updates strong{
+  color:var(--warning);
+}
+
+.firmware-status.has-updates p{
+  color:var(--muted-strong);
 }
 
 .tracker-surface{
   padding:18px 0 0;
 }
 
-.toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:24px;
-  padding-bottom:10px;
-  border-bottom:1px solid var(--line);
-}
-
-.updates-banner,
 .source-banner{
   display:none;
   align-items:center;
@@ -142,13 +145,8 @@ button{
   color:var(--muted-strong);
 }
 
-.updates-banner.active,
 .source-banner.active{
   display:flex;
-}
-
-.updates-banner{
-  color:var(--warning);
 }
 
 .source-banner{
@@ -216,7 +214,7 @@ th,td{
   text-align:left;
   padding:16px 12px;
   border-bottom:1px solid var(--line);
-  vertical-align:top;
+  vertical-align:middle;
 }
 
 th{
@@ -370,34 +368,14 @@ tbody tr:hover{
     padding:24px 18px 48px;
   }
 
-  .workflow-strip{
-    grid-template-columns:repeat(2, minmax(0,1fr));
-  }
-
-  .workflow-step:nth-child(2)::after{
-    display:none;
-  }
-
-  .toolbar{
-    align-items:flex-start;
-    flex-direction:column;
-  }
 }
 
 @media (max-width: 560px){
-  .workflow-strip{
-    grid-template-columns:1fr;
+  .firmware-status{
+    align-items:flex-start;
+    flex-direction:column;
   }
 
-  .workflow-step{
-    padding-right:0;
-  }
-
-  .workflow-step::after{
-    display:none;
-  }
-
-  .updates-banner,
   .source-banner{
     align-items:flex-start;
     flex-direction:column;
