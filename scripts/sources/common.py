@@ -189,7 +189,7 @@ def default_expected_version_pattern(source: dict[str, Any]) -> str:
         if kind == "airpods":
             return r"[0-9A-Za-z][0-9A-Za-z.\-]*"
         return r"\d+(?:\.\d+)*(?:[A-Za-z0-9.\-]*)?"
-    if source_type in {"dji_downloads", "atomos_support", "bambu_wiki", "godox_listing"}:
+    if source_type in {"dji_downloads", "atomos_support", "bambu_wiki", "godox_listing", "tplink_downloads"}:
         return r"\d+(?:\.\d+)+"
     if source_type == "sony_cscs":
         return r"\d+(?:\.\d+)*"
@@ -205,6 +205,7 @@ def default_requires_date(source: dict[str, Any]) -> bool:
         "godox_listing",
         "atomos_support",
         "bambu_wiki",
+        "tplink_downloads",
     }
 
 

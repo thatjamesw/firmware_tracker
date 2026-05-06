@@ -19,6 +19,7 @@ from sources import SOURCE_VENDOR, SYNC_HANDLERS
 from sources import apple as apple_source
 from sources import atomos as atomos_source
 from sources import bambu as bambu_source
+from sources import tplink as tplink_source
 from sources.common import compare_versions, configure_fetch, normalize_releases, version_sort_key
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -665,6 +666,7 @@ def main() -> int:
 sync_bambu_wiki = bambu_source.sync_bambu_wiki
 sync_atomos_support = atomos_source.sync_atomos_support
 sync_apple_support = apple_source.sync_apple_support
+sync_tplink_downloads = tplink_source.sync_tplink_downloads
 
 
 if __name__ == "__main__":

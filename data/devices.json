@@ -121,6 +121,13 @@
         "url": "https://wiki.bambulab.com/en/p1/manual/p1p-firmware-release-history",
         "series": "P1"
       },
+      "tplink_deco_be65_v2": {
+        "type": "tplink_downloads",
+        "page_url": "https://www.tp-link.com/nordic/support/download/deco-be65/#Firmware",
+        "url": "https://www.tp-link.com/nordic/support/download/deco-be65/#Firmware",
+        "model": "Deco BE65",
+        "hardware_version": "V2"
+      },
       "apple_ios": {
         "type": "apple_support",
         "kind": "ios",
@@ -399,6 +406,12 @@
       "title": "3D Printer",
       "devices": {
         "bambu_p1s": "Bambu Lab P1S 3D Printer"
+      }
+    },
+    "networking": {
+      "title": "Networking",
+      "devices": {
+        "tplink_deco_be65_v2": "TP-Link Deco BE65 v2"
       }
     },
     "platforms": {
@@ -717,6 +730,25 @@
             "type": "bambu_wiki_heading",
             "text": "P1 series Version 01.10.00.00 (20260330)",
             "source_url": "https://wiki.bambulab.com/en/p1/manual/p1p-firmware-release-history"
+          },
+          "confidence": 0.9
+        }
+      ]
+    },
+    "tplink_deco_be65_v2": {
+      "releases": [
+        {
+          "version": "1.2.0",
+          "released_time": "2025-08-12",
+          "release_note": {
+            "en": "New Features/Enhancements: 1. Improve security and stability. 2. Optimized the roaming experience. Bug Fixes: 1.Fixed the bug that the NAT forwarding function does not work for guest wireless clients in some cases. Note: This firmware can not be degraded to the previous version. Build: 20250718"
+          },
+          "arb": null,
+          "active": true,
+          "evidence": {
+            "type": "tplink_download_item",
+            "text": "Deco BE65(EU)_V2_1.2.0 Build 20250718",
+            "source_url": "https://www.tp-link.com/nordic/support/download/deco-be65/#Firmware"
           },
           "confidence": 0.9
         }

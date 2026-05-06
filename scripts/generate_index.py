@@ -20,7 +20,7 @@ def build_device_download_pages(device_sources: dict) -> dict:
         if not isinstance(source, dict):
             continue
         source_type = source.get("type")
-        if source_type in {"dji_downloads", "godox_listing"}:
+        if source_type in {"dji_downloads", "godox_listing", "tplink_downloads"}:
             pages[device_id] = source.get("url", "")
             continue
         if source_type == "sony_cscs":
