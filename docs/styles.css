@@ -371,13 +371,208 @@ tbody tr:hover{
 }
 
 @media (max-width: 560px){
+  body{
+    background:#f8f8fa;
+    font-size:14px;
+  }
+
+  .shell{
+    padding:18px 12px 36px;
+  }
+
+  .masthead{
+    padding-bottom:12px;
+  }
+
+  .masthead h1{
+    font-size:2.15rem;
+    line-height:1;
+  }
+
   .firmware-status{
     align-items:flex-start;
     flex-direction:column;
+    gap:12px;
+    padding:12px 0 14px;
+  }
+
+  .firmware-status strong{
+    font-size:1.15rem;
   }
 
   .source-banner{
     align-items:flex-start;
     flex-direction:column;
+  }
+
+  .tracker-surface{
+    padding-top:12px;
+  }
+
+  .table-wrap{
+    overflow-x:visible;
+  }
+
+  table,
+  thead,
+  tbody,
+  tr,
+  td{
+    display:block;
+  }
+
+  table{
+    min-width:0;
+    border-collapse:separate;
+    border-spacing:0;
+  }
+
+  thead{
+    position:absolute;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+    clip:rect(0 0 0 0);
+    white-space:nowrap;
+  }
+
+  tbody{
+    display:grid;
+    gap:10px;
+  }
+
+  tbody tr{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:center;
+    gap:0 12px;
+    padding:12px;
+    background:rgba(255,255,255,.88);
+    border:1px solid var(--line);
+    border-radius:8px;
+  }
+
+  tbody tr:hover{
+    background:rgba(255,255,255,.88);
+  }
+
+  tbody tr.row-new{
+    background:var(--accent-soft);
+    border-color:var(--accent-line);
+  }
+
+  td{
+    min-width:0;
+    padding:0;
+    border-bottom:none;
+    color:var(--muted-strong);
+    font-size:.88rem;
+    line-height:1.32;
+  }
+
+  td::before{
+    content:attr(data-label);
+    display:block;
+    margin-bottom:2px;
+    color:var(--muted);
+    font-size:.68rem;
+    font-weight:650;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+  }
+
+  td[data-label="Category"],
+  td[data-label="Device"]{
+    grid-column:1;
+  }
+
+  td[data-label="Device"]{
+    grid-row:1;
+    margin-bottom:3px;
+  }
+
+  td[data-label="Device"]::before{
+    display:none;
+  }
+
+  td[data-label="Category"]{
+    grid-row:2;
+    color:var(--muted);
+  }
+
+  td[data-label="Latest"],
+  td[data-label="Released"],
+  td[data-label="Age"]{
+    padding-top:10px;
+    border-top:1px solid var(--line);
+  }
+
+  td[data-label="Latest"]{
+    grid-column:1 / -1;
+    margin-top:8px;
+  }
+
+  td[data-label="Released"]{
+    grid-column:1;
+  }
+
+  td[data-label="Age"]{
+    grid-column:2;
+    justify-self:end;
+    text-align:right;
+  }
+
+  td[data-label="History"]{
+    grid-column:2;
+    grid-row:1 / span 2;
+    align-self:center;
+    justify-self:end;
+  }
+
+  td[data-label="History"]::before{
+    display:none;
+  }
+
+  .device-name{
+    display:block;
+    overflow-wrap:anywhere;
+    font-size:1rem;
+    line-height:1.18;
+  }
+
+  .latest-version{
+    overflow-wrap:anywhere;
+  }
+
+  .badge{
+    min-height:22px;
+    padding:2px 8px;
+    font-size:11px;
+  }
+
+  .primary,
+  .secondary,
+  .ghost{
+    min-height:38px;
+    padding:0 12px;
+    font-size:13px;
+  }
+
+  .modal{
+    padding:10px;
+    align-items:flex-end;
+  }
+
+  .modal-body{
+    max-height:86vh;
+    border-radius:16px;
+  }
+
+  .modal-header{
+    padding:16px 16px 12px;
+  }
+
+  .modal-content{
+    padding:14px 16px 18px;
   }
 }
