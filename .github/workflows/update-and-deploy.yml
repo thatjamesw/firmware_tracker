@@ -3,9 +3,14 @@ name: Update and Deploy Firmware Tracker
 on:
   workflow_dispatch:
   schedule:
-    # Start early so the generated site is usually ready by 08:00 Europe/Helsinki.
-    # Avoid :00 because GitHub scheduled workflows are more likely to be delayed or dropped then.
-    - cron: '37 6 * * *'
+    # Try several early slots so the generated site is usually ready before
+    # the workday in Europe/Helsinki. Avoid :00 because GitHub scheduled
+    # workflows are more likely to be delayed or dropped then.
+    - cron: '7 5 * * *'
+      timezone: Europe/Helsinki
+    - cron: '17 6 * * *'
+      timezone: Europe/Helsinki
+    - cron: '27 7 * * *'
       timezone: Europe/Helsinki
 
 permissions:
@@ -13,10 +18,67 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  schedule-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      run_now: ${{ steps.gate.outputs.run_now }}
+    steps:
+      - name: Decide whether to run today
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WORKFLOW_FILE: update-and-deploy.yml
+        run: |
+          if [[ "${{ github.event_name }}" != "schedule" ]]; then
+            echo "run_now=true" >> "$GITHUB_OUTPUT"
+            echo "Manual dispatch. Proceeding."
+            exit 0
+          fi
+
+          start_utc="$(TZ=Europe/Helsinki date -d 'today 00:00' --utc '+%Y-%m-%dT%H:%M:%SZ')"
+          end_utc="$(TZ=Europe/Helsinki date -d 'tomorrow 00:00' --utc '+%Y-%m-%dT%H:%M:%SZ')"
+
+          runs_json="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/${WORKFLOW_FILE}/runs?branch=${GITHUB_REF_NAME}&event=schedule&per_page=50")"
+
+          prior_active_runs="$(jq \
+            --arg current_run_id "${GITHUB_RUN_ID}" \
+            --arg start_utc "$start_utc" \
+            --arg end_utc "$end_utc" \
+            '[.workflow_runs[]
+              | select((.id | tostring) != $current_run_id)
+              | select(.created_at >= $start_utc and .created_at < $end_utc)
+              | select(.status == "queued" or .status == "in_progress")] | length' \
+            <<< "$runs_json")"
+
+          successful_runs="$(jq \
+            --arg start_utc "$start_utc" \
+            --arg end_utc "$end_utc" \
+            '[.workflow_runs[]
+              | select(.created_at >= $start_utc and .created_at < $end_utc)
+              | select(.status == "completed" and .conclusion == "success")] | length' \
+            <<< "$runs_json")"
+
+          if [[ "$prior_active_runs" != "0" ]]; then
+            echo "run_now=false" >> "$GITHUB_OUTPUT"
+            echo "Another scheduled run is already active for today in Europe/Helsinki. Skipping."
+          elif [[ "$successful_runs" != "0" ]]; then
+            echo "run_now=false" >> "$GITHUB_OUTPUT"
+            echo "A scheduled run already succeeded today in Europe/Helsinki. Skipping."
+          else
+            echo "run_now=true" >> "$GITHUB_OUTPUT"
+            echo "No active or successful scheduled run found for today in Europe/Helsinki. Proceeding."
+          fi
+
   build:
+    if: needs.schedule-gate.outputs.run_now == 'true'
+    needs: schedule-gate
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
