@@ -46,14 +46,17 @@ jobs:
 
           runs_json="$(gh api \
             "repos/${GITHUB_REPOSITORY}/actions/workflows/${WORKFLOW_FILE}/runs?branch=${GITHUB_REF_NAME}&event=schedule&per_page=50")"
+          current_created_at="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" --jq '.created_at')"
 
           prior_active_runs="$(jq \
             --arg current_run_id "${GITHUB_RUN_ID}" \
+            --arg current_created_at "$current_created_at" \
             --arg start_utc "$start_utc" \
             --arg end_utc "$end_utc" \
             '[.workflow_runs[]
               | select((.id | tostring) != $current_run_id)
               | select(.created_at >= $start_utc and .created_at < $end_utc)
+              | select(.created_at < $current_created_at)
               | select(.status == "queued" or .status == "in_progress")] | length' \
             <<< "$runs_json")"
 
