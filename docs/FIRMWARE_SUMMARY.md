@@ -1,14 +1,14 @@
 # Firmware Summary
 
-Generated (UTC): 2026-05-12T05:45:50Z
+Generated (UTC): 2026-05-13T05:55:58Z
 
 | Category | Device | Latest | Released | Age | Source | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | 3D Printer | Bambu Lab P1S 3D Printer | 01.10.00.00 | 2026-03-30 | 1 month | bambu_wiki | ok |
-| Apple | AirPods Pro 3 | 8B40 | 2026-04-30 | 12 days | apple_support | ok |
-| Apple | iOS | 26.5 | 2026-05-11 | 1 day | apple_support | ok |
-| Apple | macOS | 26.5 | 2026-05-11 | 1 day | apple_support | ok |
-| Apple | watchOS | 26.5 | 2026-05-11 | 1 day | apple_support | ok |
+| Apple | AirPods Pro 3 | 8B40 | 2026-04-30 | 13 days | apple_support | ok |
+| Apple | iOS | 26.5 | 2026-05-11 | 2 days | apple_support | ok |
+| Apple | macOS | 26.5 | 2026-05-11 | 2 days | apple_support | ok |
+| Apple | watchOS | 26.5 | 2026-05-11 | 2 days | apple_support | ok |
 | Cameras | Atomos Ninja V | 11.18.00 | 2025-11-01 | 6 months | atomos_support | ok |
 | Cameras | Sony 16-35 GM II | - | - | - | sony_cscs | ok |
 | Cameras | Sony 24 1.4 GM | 03 | 2021-11-18 | 4 years | sony_cscs | ok |
@@ -16,8 +16,8 @@ Generated (UTC): 2026-05-12T05:45:50Z
 | Cameras | Sony 70-200 GM II | 04 | 2023-12-05 | 2 years | sony_cscs | ok |
 | Cameras | Sony A1 II | 4.00 | 2025-10-30 | 6 months | sony_cscs | ok |
 | Drones | Avata 2 | 01.00.0400 | 2024-11-06 | 1 year | dji_downloads | ok |
-| Drones | Mini 5 Pro | 01.00.0600 | 2026-04-25 | 17 days | dji_downloads | ok |
-| Lighting | Godox AD400 II Pro | 1.21 | 2026-04-28 | 14 days | godox_listing | ok |
+| Drones | Mini 5 Pro | 01.00.0600 | 2026-04-25 | 18 days | dji_downloads | ok |
+| Lighting | Godox AD400 II Pro | 1.21 | 2026-04-28 | 15 days | godox_listing | ok |
 | Lighting | Godox V860II (Sony) | 1.7 | 2018-10-24 | 7 years | godox_listing | ok |
 | Lighting | Godox X3Pro S | 1.03 | 2026-01-26 | 3 months | godox_listing | ok |
 | Networking | TP-Link Deco BE65 v2 | 1.2.0 | 2025-08-12 | 9 months | tplink_downloads | ok |
